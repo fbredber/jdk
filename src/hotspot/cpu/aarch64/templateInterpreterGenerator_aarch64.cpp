@@ -814,7 +814,10 @@ void TemplateInterpreterGenerator::generate_fixed_frame(bool native_call) {
   __ ldr(rcpool, Address(rmethod, Method::const_offset()));
   __ ldr(rcpool, Address(rcpool, ConstMethod::constants_offset()));
   __ ldr(rcpool, Address(rcpool, ConstantPool::cache_offset_in_bytes()));
-  __ stp(rlocals, rcpool, Address(sp, 2 * wordSize));
+  __ sub(rscratch1, rlocals, rfp);
+  __ lsr(rscratch1, rscratch1, 3);   // rscratch1 = rlocals - fp();
+  // Now &fp()[rscratch1] == rlocals
+  __ stp(rscratch1, rcpool, Address(sp, 2 * wordSize));
 
   __ protect_return_address();
   __ stp(rfp, lr, Address(sp, 10 * wordSize));
