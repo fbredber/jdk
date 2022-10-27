@@ -146,11 +146,13 @@ inline void FreezeBase::relativize_interpreted_frame_metadata(const frame& f, co
   // on AARCH64, we may insert padding between the locals and the rest of the frame
   // (see TemplateInterpreterGenerator::generate_normal_entry, and AbstractInterpreter::layout_activation)
   // so we compute locals "from scratch" rather than relativizing the value in the stack frame, which might include padding,
-  // since we don't freeze the padding word (see recurse_freeze_interpreted_frame).
+  // since we don't freeze the padding word (see recurse_freeze_interpreted_frame). @frbr@
 
   // at(frame::interpreter_frame_last_sp_offset) can be NULL at safepoint preempts
   *hf.addr_at(frame::interpreter_frame_last_sp_offset) = hf.unextended_sp() - hf.fp();
-  *hf.addr_at(frame::interpreter_frame_locals_offset) = frame::sender_sp_offset + f.interpreter_frame_method()->max_locals() - 1;
+
+  // Make sure that locals is already relativized.
+  assert((*hf.addr_at(frame::interpreter_frame_locals_offset) == frame::sender_sp_offset + f.interpreter_frame_method()->max_locals() - 1), "");
 
   relativize_one(vfp, hfp, frame::interpreter_frame_initial_sp_offset); // == block_top == block_bottom
   relativize_one(vfp, hfp, frame::interpreter_frame_extended_sp_offset);
@@ -231,12 +233,12 @@ template<typename FKind> frame ThawBase::new_stack_frame(const frame& hf, frame&
     assert(frame_sp == unextended_sp, "");
     caller.set_sp(fp + frame::sender_sp_offset);
     frame f(frame_sp, frame_sp, fp, hf.pc());
-    // it's set again later in set_interpreter_frame_bottom, but we need to set the locals now so that
-    // we could call ContinuationHelper::InterpretedFrame::frame_bottom
+    // we need to set the locals now so that the caller of new_stack_frame() can call
+    // ContinuationHelper::InterpretedFrame::frame_bottom
     intptr_t offset = *hf.addr_at(frame::interpreter_frame_locals_offset);
     assert((int)offset == frame::sender_sp_offset + locals - 1, "");
-    // derelativize locals
-    *(intptr_t**)f.addr_at(frame::interpreter_frame_locals_offset) = fp + padding + offset;
+    // set relativized locals
+    *f.addr_at(frame::interpreter_frame_locals_offset) = /* fp + */ padding + offset;
     assert((intptr_t)f.fp() % frame::frame_alignment == 0, "");
     return f;
   } else {
@@ -299,7 +301,8 @@ inline void ThawBase::derelativize_interpreted_frame_metadata(const frame& hf, c
 }
 
 inline void ThawBase::set_interpreter_frame_bottom(const frame& f, intptr_t* bottom) {
-  *(intptr_t**)f.addr_at(frame::interpreter_frame_locals_offset) = bottom - 1;
+  // Nothing to do. Just make sure the relativized locals is already set.
+  assert((*f.addr_at(frame::interpreter_frame_locals_offset) == (bottom - 1) - f.fp()), "");
 }
 
 #endif // CPU_AARCH64_CONTINUATIONFREEZETHAW_AARCH64_INLINE_HPP

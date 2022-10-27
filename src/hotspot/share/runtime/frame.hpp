@@ -313,9 +313,9 @@ class frame {
   // Interpreter frames:
 
  private:
-  intptr_t** interpreter_frame_locals_addr() const;
-  intptr_t*  interpreter_frame_bcp_addr() const;
-  intptr_t*  interpreter_frame_mdp_addr() const;
+  intptr_t* interpreter_frame_locals_addr() const;
+  intptr_t* interpreter_frame_bcp_addr() const;
+  intptr_t* interpreter_frame_mdp_addr() const;
 
  public:
   // Locals
