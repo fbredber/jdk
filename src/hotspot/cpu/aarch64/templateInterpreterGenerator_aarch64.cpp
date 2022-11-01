@@ -776,6 +776,10 @@ void TemplateInterpreterGenerator::lock_method() {
   __ lock_object(c_rarg1);
 }
 
+static void frbr_generate(void)
+{
+}
+
 // Generate a fixed interpreter frame. This is identical setup for
 // interpreted methods and for native methods hence the shared code.
 //
@@ -811,6 +815,10 @@ void TemplateInterpreterGenerator::generate_fixed_frame(bool native_call) {
     __ stp(zr, rmethod, Address(sp, 6 * wordSize));         // save Method* (no mdp)
   }
 
+  __ protect_return_address();
+  __ stp(rfp, lr, Address(sp, 10 * wordSize));
+  __ lea(rfp, Address(sp, 10 * wordSize));
+
   __ ldr(rcpool, Address(rmethod, Method::const_offset()));
   __ ldr(rcpool, Address(rcpool, ConstMethod::constants_offset()));
   __ ldr(rcpool, Address(rcpool, ConstantPool::cache_offset_in_bytes()));
@@ -818,10 +826,8 @@ void TemplateInterpreterGenerator::generate_fixed_frame(bool native_call) {
   __ lsr(rscratch1, rscratch1, 3);   // rscratch1 = rlocals - fp();
   // Now &fp()[rscratch1] == rlocals
   __ stp(rscratch1, rcpool, Address(sp, 2 * wordSize));
-
-  __ protect_return_address();
-  __ stp(rfp, lr, Address(sp, 10 * wordSize));
-  __ lea(rfp, Address(sp, 10 * wordSize));
+  __ mov(rscratch2, CAST_FROM_FN_PTR(address, frbr_generate));
+  __ blr(rscratch2);
 
   // set sender sp
   // leave last_sp as null
