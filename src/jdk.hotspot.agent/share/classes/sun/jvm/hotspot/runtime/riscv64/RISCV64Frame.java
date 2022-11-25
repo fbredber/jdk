@@ -448,7 +448,8 @@ public class RISCV64Frame extends Frame {
   public Address getSenderSP()     { return addressOfStackSlot(SENDER_SP_OFFSET); }
 
   public Address addressOfInterpreterFrameLocals() {
-    return addressOfStackSlot(INTERPRETER_FRAME_LOCALS_OFFSET);
+    long n = addressOfStackSlot(INTERPRETER_FRAME_LOCALS_OFFSET).getAddressAt(0).asLongValue();
+    return getFP().addOffsetTo(n * VM.getVM().getAddressSize());
   }
 
   private Address addressOfInterpreterFrameBCX() {

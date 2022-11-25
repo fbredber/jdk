@@ -150,9 +150,14 @@ inline void FreezeBase::relativize_interpreted_frame_metadata(const frame& f, co
 
   // at(frame::interpreter_frame_last_sp_offset) can be NULL at safepoint preempts
   *hf.addr_at(frame::interpreter_frame_last_sp_offset) = hf.unextended_sp() - hf.fp();
+  *hf.addr_at(frame::interpreter_frame_locals_offset) = frame::sender_sp_offset + f.interpreter_frame_method()->max_locals() - 1; // @frbr@
 
   // Make sure that locals is already relativized.
-  assert((*hf.addr_at(frame::interpreter_frame_locals_offset) == frame::sender_sp_offset + f.interpreter_frame_method()->max_locals() - 1), "");
+  assert((*hf.addr_at(frame::interpreter_frame_locals_offset) == frame::sender_sp_offset + f.interpreter_frame_method()->max_locals() - 1),
+         "frame_locals: %tx  sender_sp: %tx  max_locals: %tx",
+         (ptrdiff_t)*hf.addr_at(frame::interpreter_frame_locals_offset),
+         (ptrdiff_t)frame::sender_sp_offset,
+         (ptrdiff_t)f.interpreter_frame_method()->max_locals());
 
   relativize_one(vfp, hfp, frame::interpreter_frame_initial_sp_offset); // == block_top == block_bottom
   relativize_one(vfp, hfp, frame::interpreter_frame_extended_sp_offset);
@@ -302,8 +307,13 @@ inline void ThawBase::derelativize_interpreted_frame_metadata(const frame& hf, c
 }
 
 inline void ThawBase::set_interpreter_frame_bottom(const frame& f, intptr_t* bottom) {
+
+  *f.addr_at(frame::interpreter_frame_locals_offset) = (bottom - 1) - f.fp();
+
+#if 0
   // Nothing to do. Just make sure the relativized locals is already set.
   assert((*f.addr_at(frame::interpreter_frame_locals_offset) == (bottom - 1) - f.fp()), "");
+#endif
 }
 
 #endif // CPU_AARCH64_CONTINUATIONFREEZETHAW_AARCH64_INLINE_HPP

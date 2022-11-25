@@ -647,7 +647,7 @@ void TemplateInterpreterGenerator::generate_fixed_frame(bool native_call) {
 
   __ movptr(rax, rlocals);
   __ subptr(rax, rbp);
-  __ shrptr(rax, LogBytesPerWord);  // rax = rlocals - fp();
+  __ shrptr(rax, Interpreter::logStackElementSize);  // rax = rlocals - fp();
   // Now &fp()[rax] == rlocals
   __ push(rax); // set relativized locals
 
