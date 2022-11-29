@@ -248,16 +248,10 @@ inline address* frame::sender_pc_addr() const     { return (address*) addr_at(re
 inline address  frame::sender_pc() const          { return *sender_pc_addr(); }
 inline intptr_t* frame::sender_sp() const         { return addr_at(sender_sp_offset); }
 
-#if 1 // @frbr@
-inline intptr_t** frame::interpreter_frame_locals_addr() const {
-  return (intptr_t**)addr_at(interpreter_frame_locals_offset);
-}
-#else
 inline intptr_t* frame::interpreter_frame_locals_addr() const {
   intptr_t n = *addr_at(interpreter_frame_locals_offset);
   return &fp()[n];
 }
-#endif
 
 inline intptr_t* frame::interpreter_frame_last_sp() const {
   return (intptr_t*)at(interpreter_frame_last_sp_offset);

@@ -75,8 +75,7 @@ class InterpreterMacroAssembler: public MacroAssembler {
 
   void restore_locals() {
     ld(xlocals, Address(fp, frame::interpreter_frame_locals_offset * wordSize));
-    // shadd(xlocals, xlocals, fp,  t0,  LogBytesPerWord); @frbr@
-    //    dest     index    base temp scale
+    shadd(xlocals, xlocals, fp,  t0,  LogBytesPerWord);
   }
 
   void restore_constant_pool_cache() {

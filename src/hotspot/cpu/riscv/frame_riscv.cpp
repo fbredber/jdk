@@ -481,8 +481,7 @@ bool frame::is_interpreted_frame_valid(JavaThread* thread) const {
 
   // validate locals
   if (m->max_locals() > 0) {
-    address locals = (address) *interpreter_frame_locals_addr();
-    //    address locals = (address) interpreter_frame_locals_addr(); @frbr@
+    address locals = (address) interpreter_frame_locals_addr();
     if (!thread->is_in_stack_range_incl(locals, (address)fp())) {
       return false;
     }

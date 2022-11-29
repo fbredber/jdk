@@ -33,7 +33,6 @@
 
 // This file specializes the assembler with interpreter-specific macros
 
-
 class InterpreterMacroAssembler: public MacroAssembler {
 
  public:

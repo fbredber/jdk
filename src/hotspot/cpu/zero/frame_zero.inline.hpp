@@ -100,8 +100,7 @@ inline interpreterState frame::get_interpreterState() const {
 }
 
 inline intptr_t* frame::interpreter_frame_locals_addr() const {
-  intptr_t n = get_interpreterState()->_locals;
-  return &fp()[n];
+  return get_interpreterState()->_locals;
 }
 
 inline intptr_t* frame::interpreter_frame_bcp_addr() const {

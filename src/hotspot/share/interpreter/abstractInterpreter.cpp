@@ -27,7 +27,6 @@
 #include "asm/macroAssembler.inline.hpp"
 #include "cds/metaspaceShared.hpp"
 #include "compiler/disassembler.hpp"
-// #include "interpreter/abstractInterpreter.hpp" @frbr@
 #include "interpreter/bytecodeHistogram.hpp"
 #include "interpreter/bytecodeStream.hpp"
 #include "interpreter/interpreter.hpp"
