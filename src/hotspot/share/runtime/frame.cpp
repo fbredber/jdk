@@ -393,7 +393,7 @@ frame frame::real_sender(RegisterMap* map) const {
 #ifndef ZERO
 void frame::interpreter_frame_set_locals(intptr_t* locs)  {
   assert(is_interpreted_frame(), "Not an interpreted frame");
-  *addr_at(interpreter_frame_locals_offset) = (intptr_t)(locs - fp());
+  *addr_at(interpreter_frame_locals_offset) = (intptr_t)(locs NOT_S390(- fp()));
 }
 #endif
 

@@ -316,6 +316,10 @@
 #define _z_ijava_state_neg(_component) \
          (int) (-frame::z_ijava_state_size + offset_of(frame::z_ijava_state, _component))
 
+// Needed for frame::interpreter_frame_set_locals() in src/hotspot/share/runtime/frame.cpp
+#define interpreter_frame_locals_offset \
+        (int) ((-frame::z_ijava_state_size + offset_of(frame::z_ijava_state, locals)) / sizeof(uint64_t))
+
   // ENTRY_FRAME
 
   struct z_entry_frame_locals {
