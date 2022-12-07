@@ -473,7 +473,7 @@ public class AARCH64Frame extends Frame {
   public Address getSenderSP()     { return addressOfStackSlot(SENDER_SP_OFFSET); }
 
   public Address addressOfInterpreterFrameLocals() {
-    long n = addressOfStackSlot(INTERPRETER_FRAME_LOCALS_OFFSET).getAddressAt(0).asLongValue();
+    long n = addressOfStackSlot(INTERPRETER_FRAME_LOCALS_OFFSET).getCIntegerAt(0, VM.getVM().getAddressSize(), false);
     return getFP().addOffsetTo(n * VM.getVM().getAddressSize());
   }
 
