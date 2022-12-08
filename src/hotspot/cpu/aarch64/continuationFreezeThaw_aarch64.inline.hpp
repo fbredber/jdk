@@ -244,7 +244,7 @@ template<typename FKind> frame ThawBase::new_stack_frame(const frame& hf, frame&
     intptr_t offset = *hf.addr_at(frame::interpreter_frame_locals_offset);
     assert((int)offset == frame::sender_sp_offset + locals - 1, "");
     // set relativized locals
-    *f.addr_at(frame::interpreter_frame_locals_offset) = /* fp + */ padding + offset;
+    *f.addr_at(frame::interpreter_frame_locals_offset) = padding + offset;
     assert((intptr_t)f.fp() % frame::frame_alignment == 0, "");
     return f;
   } else {
@@ -307,13 +307,9 @@ inline void ThawBase::derelativize_interpreted_frame_metadata(const frame& hf, c
 }
 
 inline void ThawBase::set_interpreter_frame_bottom(const frame& f, intptr_t* bottom) {
-
+   // set relativized locals
+   // this line can be changed into an assert when we have fixed the "frame padding problem"
   *f.addr_at(frame::interpreter_frame_locals_offset) = (bottom - 1) - f.fp();
-
-#if 0
-  // Nothing to do. Just make sure the relativized locals is already set.
-  assert((*f.addr_at(frame::interpreter_frame_locals_offset) == (bottom - 1) - f.fp()), "");
-#endif
 }
 
 #endif // CPU_AARCH64_CONTINUATIONFREEZETHAW_AARCH64_INLINE_HPP
