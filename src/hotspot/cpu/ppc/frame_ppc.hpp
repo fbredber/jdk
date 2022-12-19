@@ -276,10 +276,6 @@
 #define ijava_idx(_component) \
         (_ijava_state_neg(_component) >> LogBytesPerWord)
 
-// Needed for frame::interpreter_frame_set_locals() in src/hotspot/share/runtime/frame.cpp
-#define interpreter_frame_locals_offset \
-        (int) ((-frame::ijava_state_size + offset_of(frame::ijava_state, locals)) / sizeof(uint64_t))
-
   // ENTRY_FRAME
 
   struct entry_frame_locals {

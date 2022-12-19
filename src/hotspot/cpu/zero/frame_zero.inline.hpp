@@ -99,7 +99,7 @@ inline interpreterState frame::get_interpreterState() const {
   return zero_interpreterframe()->interpreter_state();
 }
 
-inline intptr_t* frame::interpreter_frame_locals_addr() const {
+inline intptr_t* frame::interpreter_frame_locals() const {
   return get_interpreterState()->_locals;
 }
 

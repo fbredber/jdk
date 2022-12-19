@@ -390,13 +390,6 @@ frame frame::real_sender(RegisterMap* map) const {
 // Interpreter frames
 
 
-#ifndef ZERO
-void frame::interpreter_frame_set_locals(intptr_t* locs)  {
-  assert(is_interpreted_frame(), "Not an interpreted frame");
-  *addr_at(interpreter_frame_locals_offset) = (intptr_t)(locs NOT_S390(- fp()));
-}
-#endif
-
 Method* frame::interpreter_frame_method() const {
   assert(is_interpreted_frame(), "interpreted frame expected");
   Method* m = *interpreter_frame_method_addr();
@@ -466,7 +459,7 @@ BasicObjectLock* frame::previous_monitor_in_interpreter_frame(BasicObjectLock* c
 
 intptr_t* frame::interpreter_frame_local_at(int index) const {
   const int n = Interpreter::local_offset_in_bytes(index)/wordSize;
-  intptr_t* first = interpreter_frame_locals_addr();
+  intptr_t* first = interpreter_frame_locals();
   return &(first[n]);
 }
 

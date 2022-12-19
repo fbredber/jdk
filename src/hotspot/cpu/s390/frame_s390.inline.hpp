@@ -179,7 +179,7 @@ inline intptr_t* frame::link_or_null() const {
   return link();
 }
 
-inline intptr_t* frame::interpreter_frame_locals_addr() const {
+inline intptr_t* frame::interpreter_frame_locals() const {
   return (intptr_t*) (ijava_state()->locals);
 }
 

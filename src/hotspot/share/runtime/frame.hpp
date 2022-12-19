@@ -293,7 +293,7 @@ class frame {
   // Interpreter frames:
 
  private:
-  intptr_t* interpreter_frame_locals_addr() const;
+  intptr_t* interpreter_frame_locals() const;
   intptr_t* interpreter_frame_bcp_addr() const;
   intptr_t* interpreter_frame_mdp_addr() const;
 
@@ -303,9 +303,7 @@ class frame {
   // The _at version returns a pointer because the address is used for GC.
   intptr_t* interpreter_frame_local_at(int index) const;
 
-#ifndef ZERO
   void interpreter_frame_set_locals(intptr_t* locs);
-#endif
 
   // byte code index
   jint interpreter_frame_bci() const;
