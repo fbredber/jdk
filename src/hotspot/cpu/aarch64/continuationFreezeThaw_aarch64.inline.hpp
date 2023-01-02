@@ -146,18 +146,12 @@ inline void FreezeBase::relativize_interpreted_frame_metadata(const frame& f, co
   // on AARCH64, we may insert padding between the locals and the rest of the frame
   // (see TemplateInterpreterGenerator::generate_normal_entry, and AbstractInterpreter::layout_activation)
   // so we compute locals "from scratch" rather than relativizing the value in the stack frame, which might include padding,
-  // since we don't freeze the padding word (see recurse_freeze_interpreted_frame). @frbr@
+  // since we don't freeze the padding word (see recurse_freeze_interpreted_frame).
 
   // at(frame::interpreter_frame_last_sp_offset) can be NULL at safepoint preempts
   *hf.addr_at(frame::interpreter_frame_last_sp_offset) = hf.unextended_sp() - hf.fp();
-  *hf.addr_at(frame::interpreter_frame_locals_offset) = frame::sender_sp_offset + f.interpreter_frame_method()->max_locals() - 1; // @frbr@
-
-  // Make sure that locals is already relativized.
-  assert((*hf.addr_at(frame::interpreter_frame_locals_offset) == frame::sender_sp_offset + f.interpreter_frame_method()->max_locals() - 1),
-         "frame_locals: %tx  sender_sp: %tx  max_locals: %tx",
-         (ptrdiff_t)*hf.addr_at(frame::interpreter_frame_locals_offset),
-         (ptrdiff_t)frame::sender_sp_offset,
-         (ptrdiff_t)f.interpreter_frame_method()->max_locals());
+  // this line can be changed into an assert when we have fixed the "frame padding problem"
+  *hf.addr_at(frame::interpreter_frame_locals_offset) = frame::sender_sp_offset + f.interpreter_frame_method()->max_locals() - 1;
 
   relativize_one(vfp, hfp, frame::interpreter_frame_initial_sp_offset); // == block_top == block_bottom
   relativize_one(vfp, hfp, frame::interpreter_frame_extended_sp_offset);
@@ -307,8 +301,8 @@ inline void ThawBase::derelativize_interpreted_frame_metadata(const frame& hf, c
 }
 
 inline void ThawBase::set_interpreter_frame_bottom(const frame& f, intptr_t* bottom) {
-   // set relativized locals
-   // this line can be changed into an assert when we have fixed the "frame padding problem"
+  // set relativized locals
+  // this line can be changed into an assert when we have fixed the "frame padding problem"
   *f.addr_at(frame::interpreter_frame_locals_offset) = (bottom - 1) - f.fp();
 }
 
